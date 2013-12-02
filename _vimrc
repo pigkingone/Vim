@@ -48,10 +48,10 @@ set shiftround
 set encoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set ambiwidth=double
-source $vimruntime/delmenu.vim  
-source $vimruntime/menu.vim  
+source $VIMRUNTIME/delmenu.vim  
+source $VIMRUNTIME/menu.vim  
 "set helplang=cn langmenu=zh_cn.utf-8
-language messages zh_cn.utf-8
+language messages zh_CN.UTF-8
 
 set foldmethod=indent
 set foldcolumn=4
@@ -59,19 +59,23 @@ set foldlevel=2
 set foldopen=all
 set foldclose=all
 
+if has('win32')
 set guifont=Courier_new:h10
+elseif has('unix')
+endif
 "----------------map--------------------------
+if has('win32')
 map \v :e $VIM\_vimrc<cr><cr>
-map \t :Tagbar<cr><cr>
-map \fo :NERDTree<cr><cr>
-map \fc :NERDTreeClose<cr><cr>
+elseif has('unix')
+map \v :e ~/.vimrc<cr><cr>
+endif
 map <f2> :call Do_my_hex()<cr><cr>
 "map <f3> :call Do_my_note()<cr>
 map <f3> :cp<cr><cr>
 map <f4> :cn<cr><cr>
 map <f5> :call Do_my_scrip()<cr><cr>
 map <f6> :call Do_my_view()<cr><cr>
-map \cd  :cd %:h<cr><cr>
+map \cd  :call Do_my_cd_current()<cr>
 map \gctags  :!ctags -R<cr><cr>
 map \cctags  :!del tags<cr><cr>
 map \y "+y
@@ -79,21 +83,11 @@ map \p "+p
 map \gcs :call Do_my_gen_cscope_file()<cr><cr>
 map \ucs :call Do_my_update_cscope()<cr><cr>
 "=============map functions==========================
-"generate cscope file
-fun! Do_my_gen_cscope_file()
+fu! Do_my_cd_current()
 	call My_update_file_name()
-	exe ":cs kill 0"
-	exe '!perl "D:\Program Files\Vim\cscope\cscope_files.pl" '.s:path_all.' '."\"".$VIM."\""
-	exe "!cs_gen.bat"
-	exe ":cs a cscope.out"
-endfun
-fun! Do_my_update_cscope()
-	exe ":cs kill 0"
-	exe "!cs_gen.bat"
-	exe ":cs a cscope.out"
-endfun
-
-"hex
+	exe ":cd ".s:path_dir
+endf
+"---------------------------------------
 let s:my_flag_hex=0
 function! Do_my_hex()
 if !s:my_flag_hex
@@ -212,10 +206,13 @@ endfunction
  set nocompatible               " be iMproved
      filetype off                   " required!
 
-"	set rtp+=D:\Program\ Files\Vim\bundle\vundle\
+if has('win32')
 	set rtp+=$VIM/bundle/vundle/
-"     call vundle#rc('D:\Program Files\Vim\vundle_plugin')
-     call vundle#rc('$VIM/vundle_plugin')
+	call vundle#rc('$VIM/vundle_plugin')
+elseif has('unix')
+	set rtp+=~/.vim/bundle/vundle/
+	call vundle#rc('~/.vim/vundle_plugin/')
+endif
      "call vundle#rc()
 
      " let Vundle manage Vundle
@@ -291,9 +288,9 @@ let g:ctrlp_custom_ignore = {
   let g:ctrlp_use_caching = 1
   let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
   let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:10,results:200'
-  let g:ctrlp_lazy_update = 1000
   let g:ctrlp_clear_cache_on_exit = 0
   let g:ctrlp_working_path_mode = 'w'
+  let g:ctrlp_lazy_update = 500
   let g:ctrlp_show_hidden = 1
 "end ctrlp
 "start cscope
