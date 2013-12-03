@@ -100,7 +100,7 @@ fun! Do_my_gen_cscope_file()
 	elseif has('unix')
 		exe '!perl "~/.vim/cscope/cscope_files.pl "'.s:path_all
 		"exe '!cscope -P s:path_dir'
-		exe '!cscope -Rbqk '.s:path_dir.'*'
+		exe '!cscope -Rbqk '.s:path_dir.'/*'
 	endif
 	exe ":cs a cscope.out"
 endfun
@@ -110,7 +110,7 @@ fun! Do_my_update_cscope()
 	if has('win32')
 		exe "!cs_gen.bat"
 	elseif has('unix')
-		exe '!cscope -Rbqk '.s:path_dir.'*'
+		exe '!cscope -Rbqk '.s:path_dir.'/*'
 	endif
 	exe ":cs a cscope.out"
 endfun
