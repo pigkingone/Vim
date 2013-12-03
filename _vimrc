@@ -39,6 +39,7 @@ set nu
 "colorscheme slate
 colo molokai
 set incsearch
+set hlsearch
 set nobin
 set tabstop=4
 set shiftwidth=4
@@ -86,7 +87,34 @@ map \ucs :call Do_my_update_cscope()<cr><cr>
 fu! Do_my_cd_current()
 	call My_update_file_name()
 	exe ":cd ".s:path_dir
+	echo s:path_dir
 endf
+
+"generate cscope file
+fun! Do_my_gen_cscope_file()
+	call My_update_file_name()
+	exe ":cs kill 0"
+	if has('win32')
+		exe '!perl "$VIM\cscope\cscope_files.pl" '.s:path_all.' '."\"".$VIM."\""
+		exe "!cs_gen.bat"
+	elseif has('unix')
+		exe '!perl "~/.vim/cscope/cscope_files.pl "'.s:path_all
+		"exe '!cscope -P s:path_dir'
+		exe '!cscope -Rbqk '.s:path_dir.'*'
+	endif
+	exe ":cs a cscope.out"
+endfun
+
+fun! Do_my_update_cscope()
+	exe ":cs kill 0"
+	if has('win32')
+		exe "!cs_gen.bat"
+	elseif has('unix')
+		exe '!cscope -Rbqk '.s:path_dir.'*'
+	endif
+	exe ":cs a cscope.out"
+endfun
+
 "---------------------------------------
 let s:my_flag_hex=0
 function! Do_my_hex()
@@ -187,7 +215,12 @@ endfunction
 
 function! Do_my_view()
 	call My_update_file_name()
+if has('win32')
 	exe "!explorer ".s:path_dir
+elseif has('unix')
+	echo s:path_dir
+	let @+=s:path_dir
+endif
 endfunction
 
 "---------------------------------------
@@ -196,7 +229,7 @@ function! My_update_file_name()
 let s:path_all=expand("%:p")
 let s:path_e=expand("%:e")
 let s:path_file=expand("%:t")
-let s:path_dir=expand("%:h")
+let s:path_dir=expand("%:p:h")
 endfunction
 
 
@@ -296,7 +329,11 @@ let g:ctrlp_custom_ignore = {
 "start cscope
 	if has("cscope")
 "		set csprg=/usr/local/bin/cscope
+if has('win32')
 		set csprg=$VIM/cscope/cscope.exe
+elseif has('unix')
+		set csprg=/usr/bin/cscope
+endif
 		set csto=0
 		set cst
 		set cscopequickfix=s-,c-,d-,i-,t-,e-
