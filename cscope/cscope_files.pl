@@ -4,35 +4,37 @@ $path=$ARGV[0];
 chomp $path;
 $path=~s/(.*)[\/|\\].*/$1/;
 
-$path_cs=$ARGV[1];
-chomp $path_cs;
-$path_cs=$path_cs.'/cscope/';
-$cs_gen_name='cs_gen.bat';
-$cs_gen_con='PATH='.$path_cs.
-'
-del cscope.in.out
-del cscope.out
-del cscope.po.out
-del ncscope.in.out
-del ncscope.out
-del ncscope.po.out
-cscope -Rbqk
-';
-open CS_HAND,'>',$cs_gen_name;
-print CS_HAND $cs_gen_con;
-close CS_HAND;
+if($^O=~/win32/i)
+{
+	$path_cs=$ARGV[1];
+	chomp $path_cs;
+	$path_cs=$path_cs.'/cscope/';
+	$cs_gen_name='cs_gen.bat';
+	$cs_gen_con='PATH='.$path_cs.
+	'
+	del cscope.in.out
+	del cscope.out
+	del cscope.po.out
+	del ncscope.in.out
+	del ncscope.out
+	del ncscope.po.out
+	cscope -Rbqk
+	';
+	open CS_HAND,'>',$cs_gen_name;
+	print CS_HAND $cs_gen_con;
+	close CS_HAND;
+
+}
 
 &main($path);
 
 sub main{
-#	$path=`cd`;
 	$path=@_[0];
 	chomp $path;
 	open HAND,'>','cscope.files' or die $!;
 	$option{wanted}=\&gen_list;
 	$option{preprocess}=\&fliter;
 	find(\%option,$path);
-#	`$cs_gen_name`;	
 }
 sub gen_list{
 	next if -d $_;
