@@ -29,14 +29,25 @@ if($^O=~/win32/i)
 &main($path);
 
 sub main{
-	$path=@_[0];
+	my $path=@_[0];
 	chomp $path;
+	my $cs_file;
+	$cs_file=$path."\/cscope\.files";
+if($^O=~/win32/i)
+{
 	open HAND,'>','cscope.files' or die $!;
+}
+else
+{
+	open HAND,'>',$cs_file or die $!;
+}
 	$option{wanted}=\&gen_list;
 	$option{preprocess}=\&fliter;
 	find(\%option,$path);
 }
 sub gen_list{
+	next if $_ eq '.';
+	next if $_ eq '..';
 	next if -d $_;
 	next if (
 			/\.so$/i
@@ -55,6 +66,10 @@ sub gen_list{
 			||/\.png$/i
 			||/\.bmp$/i
 			||/\.gif$/i
+			||/\.swp$/i
+			||/\.bak$/i
+			||/\.db$/i
+			||/~$/i
 	);
 #	next if !(/\.h$/i
 #		|| /\.c$/i
@@ -86,6 +101,9 @@ sub fliter{
 	}@arr;
 	@arr=grep{
 		$_!~/^__pro__$/
+	}@arr;
+	@arr=grep{
+		$_!~/^out$/i
 	}@arr;
 	@arr;
 # grep{/\.pl$/||-d}@_;

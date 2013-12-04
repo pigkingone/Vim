@@ -70,6 +70,9 @@ map \v :e $VIM\_vimrc<cr><cr>
 elseif has('unix')
 map \v :e ~/.vimrc<cr><cr>
 endif
+map \t :Tagbar<cr><cr>
+map \fo :NERDTree<cr><cr>
+map \fc :NERDTreeClose<cr><cr>
 map <f2> :call Do_my_hex()<cr><cr>
 "map <f3> :call Do_my_note()<cr>
 map <f3> :cp<cr><cr>
@@ -87,7 +90,6 @@ map \ucs :call Do_my_update_cscope()<cr><cr>
 fu! Do_my_cd_current()
 	call My_update_file_name()
 	exe ":cd ".s:path_dir
-	echo s:path_dir
 endf
 
 "generate cscope file
@@ -95,12 +97,13 @@ fun! Do_my_gen_cscope_file()
 	call My_update_file_name()
 	exe ":cs kill 0"
 	if has('win32')
-		exe '!perl "$VIM\cscope\cscope_files.pl" '.s:path_all.' '."\"".$VIM."\""
+	exe '!perl '."\"".$VIM."\"".'\cscope\cscope_files.pl '.s:path_all.' '."\"".$VIM."\""
 		exe "!cs_gen.bat"
 	elseif has('unix')
-		exe '!perl "~/.vim/cscope/cscope_files.pl "'.s:path_all
+		exe '!perl ~/.vim/cscope/cscope_files.pl '.s:path_all
 		"exe '!cscope -P s:path_dir'
-		exe '!cscope -Rbqk '.s:path_dir.'/*'
+		"exe '!cscope -Rbqk '.s:path_dir.'/*'
+		exe '!cscope -Rbqk'
 	endif
 	exe ":cs a cscope.out"
 endfun
@@ -115,7 +118,7 @@ fun! Do_my_update_cscope()
 	exe ":cs a cscope.out"
 endfun
 
-"---------------------------------------
+"hex
 let s:my_flag_hex=0
 function! Do_my_hex()
 if !s:my_flag_hex
@@ -279,6 +282,10 @@ endif
 	Bundle "vim-scripts/Mark"
 "	nerd commenter
 	Bundle "vim-scripts/The-NERD-Commenter"
+"cscope map
+	Bundle "chazy/cscope_maps"
+	"CCTree,map tree,need cscope
+	Bundle "vim-scripts/CCTree"
 	"minbufexp
 	Bundle "fholgado/minibufexpl.vim"
 	let g:miniBufExplMapCTabSwitchBufs=1
