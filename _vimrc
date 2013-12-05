@@ -59,6 +59,7 @@ set foldcolumn=4
 set foldlevel=2
 set foldopen=all
 set foldclose=all
+set nobackup
 
 if has('win32')
 set guifont=Courier_new:h10
@@ -103,6 +104,12 @@ fun! Do_my_gen_cscope_file()
 		exe '!perl ~/.vim/cscope/cscope_files.pl '.s:path_all
 		"exe '!cscope -P s:path_dir'
 		"exe '!cscope -Rbqk '.s:path_dir.'/*'
+		exe '!rm cscope.in.out'
+		exe '!del cscope.out'
+		exe '!del cscope.po.out'
+		exe '!del ncscope.in.out'
+		exe '!del ncscope.out'
+		exe '!del ncscope.po.out'
 		exe '!cscope -Rbqk'
 	endif
 	exe ":cs a cscope.out"
@@ -271,7 +278,26 @@ endif
 	"depended by vimshell.vim 
 	Bundle 'Shougo/vimproc'      
 	Bundle 'Shougo/vimshell.vim'
-	Bundle 'kien/ctrlp.vim'
+
+	"start ctrlp
+	"Bundle 'kien/ctrlp.vim'
+	"let g:ctrlp_by_filename = 1
+	"let g:ctrlp_custom_ignore = {
+				"\ 'dir':'\.git$\|\.svn$\|build',
+				"\ 'file':'\.db$\|\.rar$\|\.zip$\|\~$\|\.obj\|\.mp3\|\.mid\|\.png\|\.bmp\|\.jpg\|\.gif\|\.exe\|\.dll\|\.lib\|\.db\|\.bak',
+				"\ 'link':'SOME_BAD_SYMBOLIC_LINKS',
+				"\ }
+	"let g:ctrlp_max_files = 0
+	"let g:ctrlp_max_depth = 40
+	"let g:ctrlp_use_caching = 1
+	"let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
+	"let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:10,results:200'
+	"let g:ctrlp_clear_cache_on_exit = 0
+	"let g:ctrlp_working_path_mode = 'w'
+	"let g:ctrlp_lazy_update = 500
+	"let g:ctrlp_show_hidden = 1
+	"end ctrlp
+
 	"snipmate
 	Bundle "MarcWeber/vim-addon-mw-utils"
 	Bundle "tomtom/tlib_vim"
@@ -288,6 +314,9 @@ endif
 	Bundle "vim-scripts/CCTree"
 	"minbufexp
 	Bundle "fholgado/minibufexpl.vim"
+	"lookupfile
+	Bundle "vim-scripts/genutils"
+	Bundle "vim-scripts/lookupfile"
 	let g:miniBufExplMapCTabSwitchBufs=1
 	let g:miniBufExplMapWindowsNavVim=1
 	let g:miniBufExplMapWindowNavArrows=1
@@ -316,23 +345,6 @@ let NERDTreeHijackNetrw = 0
 let NERDTreeShowFiles = 1
 "autocmd VimEnter * :NERDTree
 "end nerdtree
-"start ctrlp
-let g:ctrlp_by_filename = 1
-let g:ctrlp_custom_ignore = {
-    \ 'dir':'\.git$\|\.svn$\|build',
-    \ 'file':'\.db$\|\.rar$\|\.zip$\|\~$\|\.obj\|\.mp3\|\.mid\|\.png\|\.bmp\|\.jpg\|\.gif\|\.exe\|\.dll\|\.lib\|\.db\|\.bak',
-    \ 'link':'SOME_BAD_SYMBOLIC_LINKS',
-    \ }
-  let g:ctrlp_max_files = 0
-  let g:ctrlp_max_depth = 40
-  let g:ctrlp_use_caching = 1
-  let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
-  let g:ctrlp_match_window = 'bottom,order:btt,min:1,max:10,results:200'
-  let g:ctrlp_clear_cache_on_exit = 0
-  let g:ctrlp_working_path_mode = 'w'
-  let g:ctrlp_lazy_update = 500
-  let g:ctrlp_show_hidden = 1
-"end ctrlp
 "start cscope
 	if has("cscope")
 "		set csprg=/usr/local/bin/cscope

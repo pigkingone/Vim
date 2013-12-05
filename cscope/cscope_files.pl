@@ -1,3 +1,5 @@
+#!usr/bin/perl
+
 use File::Find;
 #use 5.010;
 $path=$ARGV[0];
@@ -49,62 +51,55 @@ sub gen_list{
 	next if $_ eq '.';
 	next if $_ eq '..';
 	next if -d $_;
-	next if (
-			/\.so$/i
-			||/\.a$/i
-			||/\.bin$/i
-			||/\.elf$/i
-			||/\.txt$/i
-			||/\.dll$/i
-			||/\.lib$/i
-			||/\.ttf$/i
-			||/\.text$/i
-			||/\.dex$/i
-			||/\.dpk$/i
-			||/\.class$/i
-			||/\.pdf$/i
-			||/\.png$/i
-			||/\.bmp$/i
-			||/\.gif$/i
-			||/\.swp$/i
-			||/\.bak$/i
-			||/\.db$/i
-			||/~$/i
-	);
-#	next if !(/\.h$/i
-#		|| /\.c$/i
-#		|| /\.cpp$/i
-#		|| /\.mak$/i
-#		|| /\.res$/i
-#		|| /\.bat$/i
-#		|| /\.pl$/i);
-	print HAND $File::Find::name."\n" if !-d $_;
+	next if (/\W$/);# like ".h~"
+	#next if (/\.\w$/);# like ".h~"
+	$_=$File::Find::name;
+	next if ( $_ eq 'tags');
+	if (
+		/\.h$/i
+		||/\.c$/i
+		||/\.cpp$/i
+		||/\.java$/i
+		||/\.pl$/i
+		||/\.mak$/i
+		||/\.mk$/i
+		||/\.xml$/i
+		||/\.txt$/i
+		||/^\w+$/i
+	) {
+		print HAND $File::Find::name."\n" if !-d $_;
+		
+	}
 }
 sub fliter{
 	@arr=grep{
-		$_!~/^build$/
+		$_!~/^build$/i
 	}@_;
+
 	@arr=grep{
-		$_!~/^\.repo$/
+		$_!~/^\.\w+$/
 	}@arr;
+
 	@arr=grep{
-		$_!~/^\.git$/
+		$_!~/^classes$/i
 	}@arr;
+
 	@arr=grep{
-		$_!~/^\.svn$/
+		$_!~/^cscope\./i
 	}@arr;
+
 	@arr=grep{
-		$_!~/^classes$/
+		$_!~/^__pro__$/i
 	}@arr;
+
 	@arr=grep{
-		$_!~/^cscope\./
+		$_!~/^_pro_$/i
 	}@arr;
-	@arr=grep{
-		$_!~/^__pro__$/
-	}@arr;
+
 	@arr=grep{
 		$_!~/^out$/i
 	}@arr;
+
 	@arr;
 # grep{/\.pl$/||-d}@_;
 #@_;
