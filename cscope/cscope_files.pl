@@ -43,6 +43,20 @@ else
 {
 	open HAND,'>',$cs_file or die $!;
 }
+
+
+#add for lookupfile.vim,named filename.tags
+my $lookup_files;
+$lookup_files=$path.'/filenametags';
+if($^O=~/win32/i)
+{
+	open HAND_LOOKUP_FILES,'>','filenametags' or die $!;
+}
+else
+{
+	open HAND_LOOKUP_FILES,'>',$lookup_files or die $!;
+}
+print HAND_LOOKUP_FILES '!_TAG_FILE_SORTED	2	/0=unsorted, 1=sorted, 2=foldcase/'."\n";
 	$option{wanted}=\&gen_list;
 	$option{preprocess}=\&fliter;
 	find(\%option,$path);
@@ -53,9 +67,9 @@ sub gen_list{
 	next if -d $_;
 	next if (/\W$/);# like ".h~"
 	#next if (/\.\w$/);# like ".h~"
-	$_=$File::Find::name;
 	next if ( $_ eq 'tags');
-	if (
+	next if ( $_ eq 'filenametags');
+	if (									#cscope
 		/\.h$/i
 		||/\.c$/i
 		||/\.cpp$/i
@@ -65,10 +79,18 @@ sub gen_list{
 		||/\.mk$/i
 		||/\.xml$/i
 		||/\.txt$/i
+		||/\.py$/i
 		||/^\w+$/i
 	) {
-		print HAND $File::Find::name."\n" if !-d $_;
-		
+		print HAND $File::Find::name."\n" if !-d $File::Find::name;
+		print HAND_LOOKUP_FILES $_."\t".$File::Find::name."\t1\n" if !-d $File::Find::name;
+	}
+	elsif(									#lookupfiles
+		/\.ini$/i
+		||/\.bld$/i
+	)
+	{
+		print HAND_LOOKUP_FILES $_."\t".$File::Find::name."\t1\n" if !-d $File::Find::name;
 	}
 }
 sub fliter{
@@ -105,3 +127,4 @@ sub fliter{
 #@_;
 }
 close HAND;
+close HAND_LOOKUP_FILES;

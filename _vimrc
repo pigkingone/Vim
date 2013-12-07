@@ -78,7 +78,7 @@ map <f2> :call Do_my_hex()<cr><cr>
 "map <f3> :call Do_my_note()<cr>
 map <f3> :cp<cr><cr>
 map <f4> :cn<cr><cr>
-map <f5> :call Do_my_scrip()<cr><cr>
+map \g :call Do_my_scrip()<cr><cr>
 map <f6> :call Do_my_view()<cr><cr>
 map \cd  :call Do_my_cd_current()<cr>
 map \gctags  :!ctags -R<cr><cr>
@@ -312,11 +312,25 @@ endif
 	Bundle "chazy/cscope_maps"
 	"CCTree,map tree,need cscope
 	Bundle "vim-scripts/CCTree"
-	"minbufexp
-	Bundle "fholgado/minibufexpl.vim"
 	"lookupfile
 	Bundle "vim-scripts/genutils"
 	Bundle "vim-scripts/lookupfile"
+" lookupfile.vim 插件设置
+let g:LookupFile_MinPatLength = 2               "最少输�?个字符才开始查�?
+let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符�?
+let g:LookupFile_PreservePatternHistory = 0     "保存查找历史
+let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项�?
+let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文�?
+let g:LookupFile_SortMethod = ""                "关闭对搜索结果的字母排序
+call My_update_file_name()
+if filereadable(s:path_dir.'\filenametags')                "设置tag文件的名�?
+"let g:LookupFile_TagExpr =s:path_dir.'\filenametags'
+"let g:LookupFile_TagExpr ='"'.s:path_dir.'\filenametags'.'"'
+let g:LookupFile_TagExpr = string('./filenametags')
+endif
+
+	"minbufexp
+	Bundle "fholgado/minibufexpl.vim"
 	let g:miniBufExplMapCTabSwitchBufs=1
 	let g:miniBufExplMapWindowsNavVim=1
 	let g:miniBufExplMapWindowNavArrows=1
