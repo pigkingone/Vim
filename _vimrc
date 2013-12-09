@@ -3,7 +3,7 @@ source $VIMRUNTIME/vimrc_example.vim
 source $VIMRUNTIME/mswin.vim
 behave mswin
 "source $VIMRUNTIME/plugin/cscope_maps.vim
-source $VIMRUNTIME/plugin/ack.vim
+"source $VIMRUNTIME/plugin/ack.vim
 set diffexpr=MyDiff()
 function! MyDiff()
   let opt = '-a --binary '
@@ -81,7 +81,7 @@ map <f4> :cn<cr><cr>
 map \g :call Do_my_scrip()<cr><cr>
 map <f6> :call Do_my_view()<cr><cr>
 map \cd  :call Do_my_cd_current()<cr>
-map \gctags  :!ctags -R<cr><cr>
+map \ctags  :!ctags -R<cr><cr>
 map \cctags  :!del tags<cr><cr>
 map \y "+y
 map \p "+p
@@ -98,10 +98,11 @@ fun! Do_my_gen_cscope_file()
 	call My_update_file_name()
 	exe ":cs kill 0"
 	if has('win32')
-	exe '!perl '."\"".$VIM."\"".'\cscope\cscope_files.pl '.s:path_all.' '."\"".$VIM."\""
+	exe '!perl '.$VIM.'\cscope\cscope_files.pl '.s:path_all.' '.$VIM.' all'
 		exe "!cs_gen.bat"
+		"exe '!cscope -Rbqk '."\"".s:path_dir."\"".' /*'
 	elseif has('unix')
-		exe '!perl ~/.vim/cscope/cscope_files.pl '.s:path_all
+		exe '!perl ~/.vim/cscope/cscope_files.pl '.s:path_all." all"
 		"exe '!cscope -P s:path_dir'
 		"exe '!cscope -Rbqk '.s:path_dir.'/*'
 		exe '!rm cscope.in.out'
@@ -120,7 +121,8 @@ fun! Do_my_update_cscope()
 	if has('win32')
 		exe "!cs_gen.bat"
 	elseif has('unix')
-		exe '!cscope -Rbqk '.s:path_dir.'/*'
+		exe '!cscope -Rbqk '."\"".s:path_dir."\"".' /*'
+		"exe '!cscope -Rbqk '.s:path_dir.'/*'
 	endif
 	exe ":cs a cscope.out"
 endfun
@@ -312,25 +314,23 @@ endif
 	Bundle "chazy/cscope_maps"
 	"CCTree,map tree,need cscope
 	Bundle "vim-scripts/CCTree"
+	"minbufexp
+	Bundle "fholgado/minibufexpl.vim"
 	"lookupfile
 	Bundle "vim-scripts/genutils"
 	Bundle "vim-scripts/lookupfile"
-" lookupfile.vim 插件设置
-let g:LookupFile_MinPatLength = 2               "最少输�?个字符才开始查�?
-let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符�?
-let g:LookupFile_PreservePatternHistory = 0     "保存查找历史
-let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项�?
-let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文�?
-let g:LookupFile_SortMethod = ""                "关闭对搜索结果的字母排序
-call My_update_file_name()
-if filereadable(s:path_dir.'\filenametags')                "设置tag文件的名�?
-"let g:LookupFile_TagExpr =s:path_dir.'\filenametags'
-"let g:LookupFile_TagExpr ='"'.s:path_dir.'\filenametags'.'"'
-let g:LookupFile_TagExpr = string('./filenametags')
-endif
+	""""""""""""""""""""""""""""""
+	" lookupfile setting
+	""""""""""""""""""""""""""""""
+	let g:LookupFile_MinPatLength = 3               "最少输入2个字符才开始查找
+	let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符串
+	let g:LookupFile_PreservePatternHistory = 1     "保存查找历史
+	let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项目
+	let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文件
+	if filereadable("./filenametags")                "设置tag文件的名字
+		let g:LookupFile_TagExpr = '"./filenametags"'
+	endif
 
-	"minbufexp
-	Bundle "fholgado/minibufexpl.vim"
 	let g:miniBufExplMapCTabSwitchBufs=1
 	let g:miniBufExplMapWindowsNavVim=1
 	let g:miniBufExplMapWindowNavArrows=1
