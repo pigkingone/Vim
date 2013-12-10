@@ -98,7 +98,7 @@ fun! Do_my_gen_cscope_file()
 	call My_update_file_name()
 	exe ":cs kill 0"
 	if has('win32')
-	exe '!perl '.$VIM.'\cscope\cscope_files.pl '.s:path_all.' '.$VIM.' all'
+	exe '!perl '."\"".$VIM.'\cscope\cscope_files.pl'."\"".' '."\"".s:path_all."\"".' '."\"".$VIM."\"".' all'
 		exe "!cs_gen.bat"
 		"exe '!cscope -Rbqk '."\"".s:path_dir."\"".' /*'
 	elseif has('unix')
@@ -382,4 +382,3 @@ endif
 "		set csverb
 	endif
 "end cscope
-

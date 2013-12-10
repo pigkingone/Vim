@@ -20,8 +20,13 @@ elsif($what_do eq 'all') {
 chomp $path;
 $path=~s/(.*)[\/|\\].*/$1/;
 
+print "is_all= $is_all\n";
+print "is_lookupfile= $is_lookupfile\n";
+print "is_cscope= $is_cscope \n";
+print "os = $^O \n";
+
 if($is_cscope==1){
-	if($^O=~/win32/i)#gen a bat for cscope.os-win32
+	if($^O=~/win32/i||$^O=~/ms/i)#gen a bat for cscope.os-win32
 	{
 		chomp $path_cs;
 		$path_cs=$path_cs.'/cscope/';
@@ -42,7 +47,6 @@ if($is_cscope==1){
 
 	}
 }
-
 $option{wanted}=\&gen_list;
 $option{preprocess}=\&fliter;
 my(@list_all,@list_cs,@list_lookup)=undef;#store the list in memory
@@ -173,7 +177,7 @@ sub is_code {
 	0;
 }
 sub is_cscope {
-	my $_=@_[0];
+	$_=@_[0];
 	return 0 if ( $_ eq 'tags');
 	return 0 if ( $_ eq 'filenametags');
 	my $is_code=&is_code($_);	
