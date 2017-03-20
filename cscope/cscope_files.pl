@@ -73,9 +73,11 @@ sub gen_lookup_files
 	@{$ref_lookup}=map{
 	$item=$_;
 	my($name,$path)=split /\t/,$_;
+	my $new_item=join "\t",$path,$path;
 	if(1==&is_lookup($name))
 	{
-		$item;
+		#$item;
+		$new_item;
 	}
 	else{
 		undef;
@@ -84,7 +86,9 @@ sub gen_lookup_files
 
 	@{$ref_lookup}=sort @{$ref_lookup};
 	foreach my $item (@{$ref_lookup}) {
-		print HAND_LOOKUP $item."\t1\n" or die $!;
+		if($item =~ /\w+\.\w+/){
+			print HAND_LOOKUP $item."\t1\n" or die $!;
+		}
 	}
 	close HAND_LOOKUP;
 }
@@ -115,12 +119,13 @@ sub gen_list{
 	my $is_code=&is_code($_);	
 	if (
 		1==$is_code
-		||/\.xml$/i
-		||/\.txt$/i
-		||/\.ini$/i
-		||/\.bld$/i
-		||/^\w+$/i
+			||/\.xml$/i
+			||/\.txt$/i
+			||/\.ini$/i
+			||/\.bld$/i
+			||/^\w+$/i	
 	) {
+		#$item=$File::Find::name."\t".$File::Find::name;
 		$item=$_."\t".$File::Find::name;
 		push @list_all,$item;
 	}
@@ -173,6 +178,7 @@ sub is_code {
 		||/\.mak$/i
 		||/\.mk$/i
 		||/\.py$/i
+		||/\.rc$/i
 	);
 	0;
 }
