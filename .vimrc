@@ -38,12 +38,19 @@ set ic
 set nu
 "colorscheme slate
 "colo molokai
+colo atom
+"syntax on
+syntax enable
+
+
 set incsearch
 set hlsearch
 set nobin
 set tabstop=4
 set shiftwidth=4
 set shiftround
+set et
+
 "set smartindent
 "set guifont=Monaco:h9
 set encoding=utf-8
@@ -53,6 +60,10 @@ source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim  
 "set helplang=cn langmenu=zh_cn.utf-8
 language messages zh_CN.UTF-8
+set guioptions-=T	"remove toolbar
+set guioptions-=r	"remove right-scroll bar
+set guioptions-=l	"remove left-scroll bar
+set guioptions-=m	"remove menu
 
 set foldmethod=indent
 set foldcolumn=4
@@ -68,12 +79,23 @@ endif
 "----------------map--------------------------
 if has('win32')
 map \v :e $VIM\_vimrc<cr><cr>
+map \s :source $VIM\_vimrc<cr><cr>
 elseif has('unix')
 map \v :e ~/.vimrc<cr><cr>
+map \s :source ~/.vimrc<cr><cr>
 endif
 map \t :Tagbar<cr><cr>
+nmap <a-c> :tabnew<cr><cr>
+nmap <a-p> :tabp<cr><cr>
+nmap <a-n> :tabn<cr><cr>
 map \fo :NERDTree<cr><cr>
 map \fc :NERDTreeClose<cr><cr>
+nmap \lvv :vimgrepa /<c-r><c-W>/gj %<cr>:copen<cr><cr>
+nmap \lv :vim /<c-r><c-W>/gj %<cr>:copen<cr><cr>
+nmap <a-a> :vimgrepa /<c-r><c-W>/gj %
+nmap <a-l> :vim /<c-r><c-W>/gj %
+nmap <a-o> :copen<cr><cr>
+nmap <a-d> :cclo<cr><cr>
 map <f2> :call Do_my_hex()<cr><cr>
 "map <f3> :call Do_my_note()<cr>
 map <f3> :cp<cr><cr>
@@ -91,6 +113,7 @@ nmap \gf :call Do_my_gen_lookupFiles()<cr><cr>
 iab itime <c-r>=strftime("%Y-%m-%d %T")<cr>
 
 "=============map functions==========================
+ 
 fu! Do_my_cd_current()
 	call My_update_file_name()
 	exe ":cd ".s:path_dir
@@ -432,12 +455,12 @@ let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 	""""""""""""""""""""""""""""""
 	" lookupfile setting
 	""""""""""""""""""""""""""""""
-	let g:LookupFile_MinPatLength = 3               "最少输入2个字符才开始查找
-	let g:LookupFile_PreserveLastPattern = 0        "不保存上次查找的字符串
-	let g:LookupFile_PreservePatternHistory = 1     "保存查找历史
-	let g:LookupFile_AlwaysAcceptFirst = 1          "回车打开第一个匹配项目
-	let g:LookupFile_AllowNewFiles = 0              "不允许创建不存在的文件
-	if filereadable("./filenametags")                "设置tag文件的名字
+	let g:LookupFile_MinPatLength = 3               "least input 3,then search
+	let g:LookupFile_PreserveLastPattern = 0        "dont save the string last searched
+	let g:LookupFile_PreservePatternHistory = 1     "save searched history 
+	let g:LookupFile_AlwaysAcceptFirst = 1          "\n opened the first result which is searched
+	let g:LookupFile_AllowNewFiles = 0              "didnt allow to create a new file
+	if filereadable("./filenametags")                "set tag file name 
 		let g:LookupFile_TagExpr = '"./filenametags"'
 	endif
 
