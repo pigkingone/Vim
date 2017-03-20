@@ -1,33 +1,33 @@
 set nocompatible
-source $VIMRUNTIME/vimrc_example.vim
+"source $VIMRUNTIME/vimrc_example.vim
 source $VIMRUNTIME/mswin.vim
 behave mswin
 "source $VIMRUNTIME/plugin/cscope_maps.vim
 "source $VIMRUNTIME/plugin/ack.vim
-set diffexpr=MyDiff()
-function! MyDiff()
-  let opt = '-a --binary '
-  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
-  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
-  let arg1 = v:fname_in
-  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
-  let arg2 = v:fname_new
-  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
-  let arg3 = v:fname_out
-  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
-  let eq = ''
-  if $VIMRUNTIME =~ ' '
-    if &sh =~ '\<cmd'
-      let cmd = '""' . $VIMRUNTIME . '\diff"'
-      let eq = '"'
-    else
-      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
-    endif
-  else
-    let cmd = $VIMRUNTIME . '\diff'
-  endif
-  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
-endfunction
+"set diffexpr=MyDiff()
+"function! MyDiff()
+  "let opt = '-a --binary '
+  "if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  "if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  "let arg1 = v:fname_in
+  "if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  "let arg2 = v:fname_new
+  "if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  "let arg3 = v:fname_out
+  "if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  "let eq = ''
+  "if $VIMRUNTIME =~ ' '
+    "if &sh =~ '\<cmd'
+      "let cmd = '""' . $VIMRUNTIME . '\diff"'
+      "let eq = '"'
+    "else
+      "let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    "endif
+  "else
+    "let cmd = $VIMRUNTIME . '\diff'
+  "endif
+  "silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
+"endfunction
 "pathogen plud start
 "call pathogen#infect()
 "syntax on
@@ -37,7 +37,7 @@ endfunction
 set ic
 set nu
 "colorscheme slate
-colo molokai
+"colo molokai
 set incsearch
 set hlsearch
 set nobin
@@ -87,11 +87,20 @@ map \y "+y
 map \p "+p
 map \gcs :call Do_my_gen_cscope_file()<cr><cr>
 map \ucs :call Do_my_update_cscope()<cr><cr>
+nmap \gf :call Do_my_gen_lookupFiles()<cr><cr>
+iab itime <c-r>=strftime("%Y-%m-%d %T")<cr>
+
 "=============map functions==========================
 fu! Do_my_cd_current()
 	call My_update_file_name()
 	exe ":cd ".s:path_dir
 endf
+
+"generate lookupfiles
+fun! Do_my_gen_lookupFiles()
+	call My_update_file_name()
+	exe '!perl ~/.vim/cscope/cscope_files.pl '.s:path_all." lookupfile"
+endfun
 
 "generate cscope file
 fun! Do_my_gen_cscope_file()
@@ -121,7 +130,8 @@ fun! Do_my_update_cscope()
 	if has('win32')
 		exe "!cs_gen.bat"
 	elseif has('unix')
-		exe '!cscope -Rbqk '."\"".s:path_dir."\"".' /*'
+		exe '!cscope -Rbqk'
+		"exe '!cscope -Rbqk '."\"".s:path_dir."\"".' /*'
 		"exe '!cscope -Rbqk '.s:path_dir.'/*'
 	endif
 	exe ":cs a cscope.out"
@@ -255,7 +265,7 @@ if has('win32')
 	set rtp+=$VIM/bundle/vundle/
 	call vundle#rc('$VIM/vundle_plugin')
 elseif has('unix')
-	set rtp+=~/.vim/bundle/vundle/
+	set rtp+=~/.vim/vundle_plugin/vundle/
 	call vundle#rc('~/.vim/vundle_plugin/')
 endif
      "call vundle#rc()
@@ -277,9 +287,106 @@ endif
 	Bundle 'navajo-night'
 	Bundle 'baskerville/bubblegum'
 	Bundle 'bling/vim-airline'
+    Bundle 'mattn/emmet-vim'
+    let g:user_emmet_install_global = 0
+    let g:user_emmet_mode='a'    "enable all function in all mode.
+    autocmd FileType html,css,js,hbs EmmetInstal
 	"depended by vimshell.vim 
-	Bundle 'Shougo/vimproc'      
-	Bundle 'Shougo/vimshell.vim'
+	"Bundle 'Shougo/vimproc'      
+	"Bundle 'Shougo/vimshell.vim'
+    Bundle 'Shougo/neocomplcache.vim'
+    "Bundle 'Shougo/neocomplete.vim'
+    "----------begin-------neocomplete--------------
+    "Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplcache.
+let g:neocomplcache_enable_at_startup = 1
+" Use smartcase.
+let g:neocomplcache_enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+" Enable heavy features.
+" Use camel case completion.
+"let g:neocomplcache_enable_camel_case_completion = 1
+" Use underbar completion.
+"let g:neocomplcache_enable_underbar_completion = 1
+
+" Define dictionary.
+let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplcache_keyword_patterns')
+    let g:neocomplcache_keyword_patterns = {}
+endif
+let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-l>     neocomplcache#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplcache#smart_close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+endfunction
+" <TAB>: completion.
+"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplcache#close_popup()
+inoremap <expr><C-e>  neocomplcache#cancel_popup()
+" Close popup by <Space>.
+"inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() : "\<Space>"
+
+" For cursor moving in insert mode(Not recommended)
+"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
+"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
+"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
+"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
+" Or set this.
+"let g:neocomplcache_enable_cursor_hold_i = 1
+" Or set this.
+"let g:neocomplcache_enable_insert_char_pre = 1
+
+" AutoComplPop like behavior.
+"let g:neocomplcache_enable_auto_select = 1
+
+" Shell like behavior(not recommended).
+"set completeopt+=longest
+"let g:neocomplcache_enable_auto_select = 1
+"let g:neocomplcache_disable_auto_complete = 1
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplcache_force_omni_patterns')
+  let g:neocomplcache_force_omni_patterns = {}
+endif
+let g:neocomplcache_force_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+let g:neocomplcache_force_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplcache_force_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+    "----------end-------neocomplete--------------
 
 	"start ctrlp
 	"Bundle 'kien/ctrlp.vim'
@@ -301,24 +408,27 @@ endif
 	"end ctrlp
 
 	"snipmate
-	Bundle "MarcWeber/vim-addon-mw-utils"
-	Bundle "tomtom/tlib_vim"
-	Bundle "garbas/vim-snipmate"
-	Bundle "honza/vim-snippets"
-"	Bundle 'Shougo/neocomplete.vim'
-"	mark
-	Bundle "vim-scripts/Mark"
-"	nerd commenter
-	Bundle "vim-scripts/The-NERD-Commenter"
-"cscope map
-	Bundle "chazy/cscope_maps"
-	"CCTree,map tree,need cscope
-	Bundle "vim-scripts/CCTree"
+	Bundle 'MarcWeber/vim-addon-mw-utils'
+	Bundle 'tomtom/tlib_vim'
+"	Bundle 'garbas/vim-snipmate'
+"	Bundle 'honza/vim-snippets'
+    Bundle 'vim-scripts/snipMate'
+    "----snipmate-----------
+    "----snipmate-----------
+    "Bundle 'Shougo/neocomplete.vim'
+    "mark
+	Bundle 'vim-scripts/Mark'
+    "nerd commenter
+	Bundle 'vim-scripts/The-NERD-Commenter'
 	"minbufexp
-	Bundle "fholgado/minibufexpl.vim"
+	Bundle 'fholgado/minibufexpl.vim'
 	"lookupfile
-	Bundle "vim-scripts/genutils"
-	Bundle "vim-scripts/lookupfile"
+	Bundle 'vim-scripts/genutils'
+	Bundle 'vim-scripts/lookupfile'
+    "cscope map
+	Bundle 'chazy/cscope_maps'
+	"CCTree,map tree,need cscope
+	Bundle 'vim-scripts/CCTree'
 	""""""""""""""""""""""""""""""
 	" lookupfile setting
 	""""""""""""""""""""""""""""""
@@ -344,6 +454,7 @@ endif
      filetype plugin indent on     " required!
      " or 
      " filetype plugin on          " to not use the indentation settings set by plugins
+	 Bundle "vim-scripts/gtags.vim"
 "end vundle
 "begin tagbar
 let g:tagbar_show_linenumbers = 1
@@ -365,7 +476,8 @@ let NERDTreeShowFiles = 1
 if has('win32')
 		set csprg=$VIM/cscope/cscope.exe
 elseif has('unix')
-		set csprg=/usr/bin/cscope
+		set csprg=~/bin/cscope/bin/cscope
+		"set csprg=/home/user/bin/cscope/bin
 endif
 		set csto=0
 		set cst
