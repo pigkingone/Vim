@@ -59,7 +59,7 @@ set ambiwidth=double
 source $VIMRUNTIME/delmenu.vim  
 source $VIMRUNTIME/menu.vim  
 "set helplang=cn langmenu=zh_cn.utf-8
-language messages zh_CN.UTF-8
+"language messages zh_CN.UTF-8
 set guioptions-=T	"remove toolbar
 set guioptions-=r	"remove right-scroll bar
 set guioptions-=l	"remove left-scroll bar
@@ -71,6 +71,7 @@ set foldlevel=2
 set foldopen=all
 set foldclose=all
 set nobackup
+set backspace=indent,eol,start
 
 if has('win32')
 set guifont=Courier_new:h10
@@ -83,17 +84,20 @@ map \s :source $VIM\_vimrc<cr><cr>
 elseif has('unix')
 map \v :e ~/.vimrc<cr><cr>
 map \s :source ~/.vimrc<cr><cr>
+else
+map \v :e ~/.vimrc<cr><cr>
+map \s :source ~/.vimrc<cr><cr>
 endif
 map \t :Tagbar<cr><cr>
-nmap <a-c> :tabnew<cr><cr>
-nmap <a-p> :tabp<cr><cr>
-nmap <a-n> :tabn<cr><cr>
+nmap ;tc :tabnew<cr><cr>
+nmap ;tp :tabp<cr><cr>
+nmap ;tn :tabn<cr><cr>
 map \fo :NERDTree<cr><cr>
 map \fc :NERDTreeClose<cr><cr>
 nmap \lvv :vimgrepa /<c-r><c-W>/gj %<cr>:copen<cr><cr>
 nmap \lv :vim /<c-r><c-W>/gj %<cr>:copen<cr><cr>
-nmap <a-a> :vimgrepa /<c-r><c-W>/gj %
-nmap <a-l> :vim /<c-r><c-W>/gj %
+nmap ;co :copen<cr><cr>
+nmap ;cd :cclo<cr><cr>
 nmap <a-o> :copen<cr><cr>
 nmap <a-d> :cclo<cr><cr>
 map <f2> :call Do_my_hex()<cr><cr>
@@ -144,6 +148,17 @@ fun! Do_my_gen_cscope_file()
 		exe '!del ncscope.out'
 		exe '!del ncscope.po.out'
 		exe '!cscope -Rbqk'
+    else
+		exe '!perl ~/.vim/cscope/cscope_files.pl '.s:path_all." all"
+		"exe '!cscope -P s:path_dir'
+		"exe '!cscope -Rbqk '.s:path_dir.'/*'
+		exe '!rm cscope.in.out'
+		exe '!del cscope.out'
+		exe '!del cscope.po.out'
+		exe '!del ncscope.in.out'
+		exe '!del ncscope.out'
+		exe '!del ncscope.po.out'
+		exe '!cscope -Rbqk'
 	endif
 	exe ":cs a cscope.out"
 endfun
@@ -156,6 +171,9 @@ fun! Do_my_update_cscope()
 		exe '!cscope -Rbqk'
 		"exe '!cscope -Rbqk '."\"".s:path_dir."\"".' /*'
 		"exe '!cscope -Rbqk '.s:path_dir.'/*'
+        "else
+    else
+		exe '!cscope -Rbqk'
 	endif
 	exe ":cs a cscope.out"
 endfun
@@ -265,6 +283,9 @@ if has('win32')
 elseif has('unix')
 	echo s:path_dir
 	let @+=s:path_dir
+else
+	echo s:path_dir
+	let @+=s:path_dir
 endif
 endfunction
 
@@ -289,6 +310,9 @@ if has('win32')
 	call vundle#rc('$VIM/vundle_plugin')
 elseif has('unix')
 	set rtp+=~/.vim/vundle_plugin/vundle/
+	call vundle#rc('~/.vim/vundle_plugin')
+else
+	set rtp+=~/.vim/vundle_plugin/vundle/
 	call vundle#rc('~/.vim/vundle_plugin/')
 endif
      "call vundle#rc()
@@ -301,6 +325,7 @@ endif
      "Bundle 'tpope/vim-fugitive'
      "Bundle 'taglist.vim'
 	Bundle 'L9'
+    Bundle 'skywind3000/asyncrun.vim'
 	Bundle 'majutsushi/tagbar'
 	Bundle 'FuzzyFinder'
 	Bundle 'scrooloose/nerdtree'
@@ -310,10 +335,7 @@ endif
 	Bundle 'navajo-night'
 	Bundle 'baskerville/bubblegum'
 	Bundle 'bling/vim-airline'
-    Bundle 'mattn/emmet-vim'
-    let g:user_emmet_install_global = 0
-    let g:user_emmet_mode='a'    "enable all function in all mode.
-    autocmd FileType html,css,js,hbs EmmetInstal
+	"
 	"depended by vimshell.vim 
 	"Bundle 'Shougo/vimproc'      
 	"Bundle 'Shougo/vimshell.vim'
@@ -367,7 +389,7 @@ endfunction
 " <C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
+"inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
 " Close popup by <Space>.
 "inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() : "\<Space>"
@@ -448,7 +470,15 @@ let g:neocomplcache_force_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 	"lookupfile
 	Bundle 'vim-scripts/genutils'
 	Bundle 'vim-scripts/lookupfile'
-    "cscope map
+	Bundle 'mattn/emmet-vim'
+	let g:user_emmet_install_global = 0
+	let g:user_emmet_mode='a'    "enable all function in all mode.
+	autocmd FileType html,css,javascript EmmetInstall
+	autocmd BufRead *.hbs :EmmetInstall
+
+	"let g:user_emmet_leader_key='<c>'
+	"autocmd FileType html,css,js,hbs EmmetInstall
+	"cscope map
 	Bundle 'chazy/cscope_maps'
 	"CCTree,map tree,need cscope
 	Bundle 'vim-scripts/CCTree'
@@ -499,6 +529,9 @@ let NERDTreeShowFiles = 1
 if has('win32')
 		set csprg=$VIM/cscope/cscope.exe
 elseif has('unix')
+		set csprg=~/bin/cscope/bin/cscope
+		"set csprg=/home/user/bin/cscope/bin
+else
 		set csprg=~/bin/cscope/bin/cscope
 		"set csprg=/home/user/bin/cscope/bin
 endif
